@@ -410,11 +410,109 @@
         }
 
         @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .hero p {
+                font-size: 1em;
+            }
+            
+            .confetti-btn {
+                padding: 15px 35px;
+                font-size: 0.9em;
+            }
+            
             .timer-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
             }
+            
+            .timer-value {
+                font-size: 2.5em;
+            }
+            
+            .timer-container h2,
+            .cake-container h2,
+            .fortune-container h2,
+            .gallery-container h2,
+            .fireworks-container h2 {
+                font-size: 1.5em;
+            }
+            
+            .cake {
+                width: 250px;
+            }
+            
+            .cake-layer {
+                height: 60px;
+            }
+            
+            .fortune-container div {
+                font-size: 1em !important;
+                padding: 20px !important;
+            }
+            
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .polaroid-img {
+                height: 280px;
+            }
+            
+            .audio-controls {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .audio-controls button {
+                padding: 10px 15px;
+                font-size: 0.8em;
+            }
+            
+            .section {
+                padding: 40px 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
             .hero h1 {
-                font-size: 3em;
+                font-size: 2em;
+            }
+            
+            .hero p {
+                font-size: 0.9em;
+            }
+            
+            .timer-value {
+                font-size: 2em;
+            }
+            
+            .timer-label {
+                font-size: 0.7em;
+            }
+            
+            .cake {
+                width: 200px;
+            }
+            
+            .cake-layer {
+                height: 50px;
+            }
+            
+            .polaroid {
+                padding: 15px;
+                padding-bottom: 60px;
+            }
+            
+            .polaroid-img {
+                height: 250px;
+            }
+            
+            .polaroid-caption {
+                font-size: 0.9em;
             }
         }
     </style>
@@ -426,7 +524,7 @@
 
     <!-- Audio Element (Hidden) -->
     <audio id="birthday-song" loop>
-        <source src="./music/Happy Birthday, Zuveria (You're Still Here Edition).mp3" type="audio/mpeg">
+        <source src="./audio/birthday-song.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Audio Controls -->
@@ -538,8 +636,8 @@
                 </div>
                 <div class="polaroid">
                     <div class="polaroid-img">
-                         <video loop muted playsinline preload="metadata">
-                            <source src="./videos/Snapchat-966002333.mp4" type="video/mp4">
+                        <video loop muted playsinline preload="metadata">
+                            <source src="./videos/Snapchat-1938803696.mp4" type="video/mp4">
                         </video>
                     </div>
                     <div class="polaroid-caption">Questionable decisions were made</div>
@@ -555,7 +653,7 @@
                 <div class="polaroid">
                     <div class="polaroid-img">
                         <video loop muted playsinline preload="metadata">
-                            <source src="./videos/Snapchat-1938803696.mp4" type="video/mp4">
+                            <source src="./videos/Snapchat-966002333.mp4" type="video/mp4">
                         </video>
                     </div>
                     <div class="polaroid-caption">More disasters await</div>
