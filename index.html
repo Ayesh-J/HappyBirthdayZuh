@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Zuveria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Playfair Display', 'Georgia', serif;
+            background: #0a0a0a;
+            color: #e8e8e8;
+            overflow-x: hidden;
+        }
+
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        /* Confetti Section */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .hero {
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 5em;
+            font-weight: 400;
+            margin-bottom: 30px;
+            letter-spacing: 0.05em;
+            color: #d4af37;
+            animation: fadeInScale 1.5s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            margin-bottom: 50px;
+            opacity: 0;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            animation: fadeIn 1.5s ease-out 0.8s forwards;
+        }
+
+        .confetti-btn {
+            background: transparent;
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 18px 50px;
+            font-size: 1em;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            opacity: 0;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.15em;
+            animation: fadeIn 1.5s ease-out 1.5s forwards;
+        }
+
+        .confetti-btn:hover {
+            background: #d4af37;
+            color: #0a0a0a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Audio Controls */
+        .audio-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+            display: none;
+        }
+
+        .audio-controls button {
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.1em;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .audio-controls button:hover {
+            background: #d4af37;
+            color: #0a0a0a;
+        }
+
+        /* Timer Section */
+        .timer-container {
+            text-align: center;
+        }
+
+        .timer-container h2 {
+            font-size: 2em;
+            margin-bottom: 50px;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: #d4af37;
+        }
+
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .timer-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timer-value {
+            font-size: 3.5em;
+            font-weight: 300;
+            color: #e8e8e8;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-label {
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.7;
+            letter-spacing: 0.15em;
+        }
+
+        /* Birthday Cake Section */
+        .cake-container {
+            text-align: center;
+        }
+
+        .cake-container h2 {
+            font-size: 2em;
+            margin-bottom: 60px;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: #d4af37;
+        }
+
+        .cake {
+            position: relative;
+            width: 300px;
+            margin: 0 auto 30px;
+        }
+
+        .cake-layer {
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+            border: 3px solid #654321;
+            position: relative;
+            margin-bottom: 5px;
+        }
+
+        .cake-layer:nth-child(2) {
+            width: 90%;
+            margin: 0 auto 5px;
+        }
+
+        .cake-layer:nth-child(3) {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .frosting {
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 15px;
+            background: #f5f5dc;
+            border-radius: 50%;
+        }
+
+        .candle-holder {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .candle {
+            width: 20px;
+            height: 60px;
+            background: linear-gradient(to bottom, #ff6b6b 0%, #ff8787 100%);
+            border-radius: 3px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .wick {
+            width: 2px;
+            height: 10px;
+            background: #333;
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .flame {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 30px;
+            background: radial-gradient(ellipse at center, #ffff00 0%, #ff9900 40%, #ff6600 70%, transparent 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 0.3s infinite alternate;
+            transition: opacity 0.5s ease;
+        }
+
+        .flame.blown {
+            opacity: 0;
+        }
+
+        @keyframes flicker {
+            0% {
+                transform: translateX(-50%) scale(1) translateY(0);
+            }
+            100% {
+                transform: translateX(-50%) scale(1.05) translateY(-2px);
+            }
+        }
+
+        .cake-instruction {
+            font-size: 0.9em;
+            opacity: 0.6;
+            letter-spacing: 0.1em;
+        }
+
+        /* Message Section */
+        .fortune-container {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .fortune-container h2 {
+            font-size: 2em;
+            margin-bottom: 60px;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: #d4af37;
+        }
+
+        /* Polaroid Gallery */
+        .gallery-container h2 {
+            font-size: 2em;
+            margin-bottom: 60px;
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: #d4af37;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .polaroid {
+            background: #f8f8f8;
+            padding: 20px;
+            padding-bottom: 80px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            transform: rotate(0deg);
+            transition: all 0.4s ease;
+        }
+
+        .polaroid:nth-child(odd) {
+            transform: rotate(-2deg);
+        }
+
+        .polaroid:nth-child(even) {
+            transform: rotate(2deg);
+        }
+
+        .polaroid:hover {
+            transform: rotate(0deg) translateY(-10px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        .polaroid-img {
+            width: 100%;
+            height: 350px;
+            background: #1a1a1a;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .polaroid-img video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .polaroid-caption {
+            color: #333;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.05em;
+        }
+
+        /* Fireworks Section */
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .fireworks-container {
+            text-align: center;
+        }
+
+        .fireworks-container h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: #d4af37;
+        }
+
+        .fireworks-container p {
+            font-size: 1.2em;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+        }
+
+        .fireworks-btn {
+            background: transparent;
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 18px 50px;
+            font-size: 1em;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.15em;
+        }
+
+        .fireworks-btn:hover {
+            background: #d4af37;
+            color: #0a0a0a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .timer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero h1 {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="confetti-canvas"></canvas>
+    <canvas id="fireworks-canvas"></canvas>
+
+    <!-- Audio Element (Hidden) -->
+    <audio id="birthday-song" loop>
+        <source src="./music/Happy Birthday, Zuveria (You're Still Here Edition).mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Audio Controls -->
+    <div class="audio-controls" id="audio-controls">
+        <button onclick="toggleAudio()">⏸️ PAUSE MUSIC</button>
+    </div>
+
+    <!-- Hero Section with Confetti -->
+    <section class="section hero">
+        <h1>HAPPY BIRTHDAY ZUVERIA</h1>
+        <p>BRACE YOURSELF FOR CHAOS</p>
+        <button class="confetti-btn" onclick="startCelebration()">LET'S CELEBRATE</button>
+    </section>
+
+    <!-- Timer Section -->
+    <section class="section">
+        <div class="timer-container">
+            <h2>YOU'VE SURVIVED THIS LONG</h2>
+            <div class="timer-grid">
+                <div class="timer-unit">
+                    <div class="timer-value" id="years">0</div>
+                    <div class="timer-label">YEARS</div>
+                </div>
+                <div class="timer-unit">
+                    <div class="timer-value" id="months">0</div>
+                    <div class="timer-label">MONTHS</div>
+                </div>
+                <div class="timer-unit">
+                    <div class="timer-value" id="days">0</div>
+                    <div class="timer-label">DAYS</div>
+                </div>
+                <div class="timer-unit">
+                    <div class="timer-value" id="hours">0</div>
+                    <div class="timer-label">HOURS</div>
+                </div>
+                <div class="timer-unit">
+                    <div class="timer-value" id="minutes">0</div>
+                    <div class="timer-label">MINUTES</div>
+                </div>
+                <div class="timer-unit">
+                    <div class="timer-value" id="seconds">0</div>
+                    <div class="timer-label">SECONDS</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Birthday Cake Section -->
+    <section class="section">
+        <div class="cake-container">
+            <h2>MAKE A WISH (NO REFUNDS)</h2>
+            <div class="cake">
+                <div class="candle-holder">
+                    <div class="flame" id="flame"></div>
+                    <div class="candle">
+                        <div class="wick"></div>
+                    </div>
+                </div>
+                <div class="cake-layer">
+                    <div class="frosting"></div>
+                </div>
+                <div class="cake-layer">
+                    <div class="frosting"></div>
+                </div>
+                <div class="cake-layer">
+                    <div class="frosting"></div>
+                </div>
+            </div>
+            <div class="cake-instruction">Click and hold to blow it out (if you can)</div>
+        </div>
+    </section>
+
+    <!-- Message Section -->
+    <section class="section">
+        <div class="fortune-container">
+            <h2>A TOTALLY SERIOUS MESSAGE</h2>
+            <div style="max-width: 700px; text-align: center; line-height: 2; font-size: 1.2em; letter-spacing: 0.05em; padding: 40px;">
+                <p style="margin-bottom: 30px;">
+                    Congratulations on completing another lap around the sun! You're officially older, but let's not talk about wiser—that's still up for debate.
+                </p>
+                <p style="margin-bottom: 30px;">
+                    Another year of questionable life choices, regrettable haircuts, and somehow still managing to be the chaos we all signed up for.
+                </p>
+                <p style="margin-bottom: 30px;">
+                    You've survived 21 years of putting up with me (and everyone else), which honestly deserves an award. Or therapy. Probably both.
+                </p>
+                <p style="color: #d4af37; font-style: italic; margin-top: 50px;">
+                    Here's to you, Zuveria—still weird, still wonderful, still stuck with us. 🎂
+                </p>
+                <p style="font-size: 0.9em; opacity: 0.7; margin-top: 30px;">
+                    (But seriously, you're pretty great. Don't let it go to your head though.)
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Polaroid Gallery -->
+    <section class="section">
+        <div class="gallery-container">
+            <h2>PROOF YOU SURVIVED</h2>
+            <div class="gallery">
+                <div class="polaroid">
+                    <div class="polaroid-img">
+                        <video loop muted playsinline preload="metadata">
+                            <source src="./videos/Snapchat-1597249575.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="polaroid-caption">That time we almost died laughing</div>
+                </div>
+                <div class="polaroid">
+                    <div class="polaroid-img">
+                        <video loop muted playsinline preload="metadata">
+                            <source src="./videos/Snapchat-1938803696.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="polaroid-caption">Questionable decisions were made</div>
+                </div>
+                <div class="polaroid">
+                    <div class="polaroid-img">
+                        <video loop muted playsinline preload="metadata">
+                            <source src="./videos/Snapchat-958680297.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="polaroid-caption">Chaos in its natural habitat</div>
+                </div>
+                <div class="polaroid">
+                    <div class="polaroid-img">
+                        <video loop muted playsinline preload="metadata">
+                            <source src="./videos/Snapchat-966002333.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="polaroid-caption">More disasters await</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fireworks Finale -->
+    <section class="section">
+        <div class="fireworks-container">
+            <h2>GRAND FINALE</h2>
+            <p style="font-size: 1.3em; margin-bottom: 30px;">You actually made it to the end</p>
+            <button class="fireworks-btn" onclick="launchFireworks()">ILLUMINATE</button>
+        </div>
+    </section>
+
+    <script>
+        let birthdayAudio = document.getElementById('birthday-song');
+        let isPlaying = false;
+
+        // Start celebration with music
+        function startCelebration() {
+            birthdayAudio.play();
+            isPlaying = true;
+            document.getElementById('audio-controls').style.display = 'block';
+            triggerConfetti();
+        }
+
+        // Toggle audio playback
+        function toggleAudio() {
+            if (isPlaying) {
+                birthdayAudio.pause();
+                isPlaying = false;
+                document.querySelector('.audio-controls button').textContent = '▶️ PLAY MUSIC';
+            } else {
+                birthdayAudio.play();
+                isPlaying = true;
+                document.querySelector('.audio-controls button').textContent = '⏸️ PAUSE MUSIC';
+            }
+        }
+
+        // Age Timer with separate units
+        const birthYear = 2003;
+        const birthMonth = 11;
+        const birthDay = 28;
+
+        function updateAgeTimer() {
+            const now = new Date();
+            const birthDate = new Date(birthYear, birthMonth, birthDay);
+            
+            let years = now.getFullYear() - birthDate.getFullYear();
+            let months = now.getMonth() - birthDate.getMonth();
+            let days = now.getDate() - birthDate.getDate();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            
+            if (days < 0) {
+                months--;
+                const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+            
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateAgeTimer, 1000);
+        updateAgeTimer();
+
+        // Candle blowing functionality
+        const flame = document.getElementById('flame');
+        let blowTimeout;
+        let isBlown = false;
+
+        flame.addEventListener('mousedown', startBlow);
+        flame.addEventListener('touchstart', startBlow);
+        flame.addEventListener('mouseup', stopBlow);
+        flame.addEventListener('touchend', stopBlow);
+        flame.addEventListener('mouseleave', stopBlow);
+
+        function startBlow() {
+            if (isBlown) return;
+            blowTimeout = setTimeout(() => {
+                flame.classList.add('blown');
+                isBlown = true;
+                setTimeout(() => {
+                    triggerConfetti();
+                }, 500);
+            }, 1000);
+        }
+
+        function stopBlow() {
+            clearTimeout(blowTimeout);
+        }
+
+        // Auto-play videos on hover with error handling
+        document.querySelectorAll('.polaroid').forEach(polaroid => {
+            const video = polaroid.querySelector('video');
+            
+            video.addEventListener('error', function() {
+                console.log('Video failed to load:', this.src);
+                this.parentElement.innerHTML = '<div style="color: #666; padding: 20px;">Video not available</div>';
+            });
+            
+            polaroid.addEventListener('mouseenter', () => {
+                video.play().catch(e => console.log('Play failed:', e));
+            });
+            polaroid.addEventListener('mouseleave', () => {
+                video.pause();
+            });
+        });
+
+        // Confetti Animation
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const confettiCtx = confettiCanvas.getContext('2d');
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+
+        let confettiPieces = [];
+
+        function createConfetti() {
+            const colors = ['#d4af37', '#f5f5dc', '#c9984a', '#e8e8e8'];
+            for (let i = 0; i < 120; i++) {
+                confettiPieces.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: -10,
+                    size: Math.random() * 8 + 4,
+                    speedY: Math.random() * 2 + 1.5,
+                    speedX: Math.random() * 1.5 - 0.75,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 8 - 4
+                });
+            }
+        }
+
+        function animateConfetti() {
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            confettiPieces.forEach((piece, index) => {
+                confettiCtx.save();
+                confettiCtx.translate(piece.x, piece.y);
+                confettiCtx.rotate((piece.rotation * Math.PI) / 180);
+                confettiCtx.fillStyle = piece.color;
+                confettiCtx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size);
+                confettiCtx.restore();
+
+                piece.y += piece.speedY;
+                piece.x += piece.speedX;
+                piece.rotation += piece.rotationSpeed;
+
+                if (piece.y > confettiCanvas.height) {
+                    confettiPieces.splice(index, 1);
+                }
+            });
+
+            if (confettiPieces.length > 0) {
+                requestAnimationFrame(animateConfetti);
+            }
+        }
+
+        function triggerConfetti() {
+            createConfetti();
+            animateConfetti();
+        }
+
+        // Fireworks Animation
+        const fireworksCanvas = document.getElementById('fireworks-canvas');
+        const fireworksCtx = fireworksCanvas.getContext('2d');
+        fireworksCanvas.width = window.innerWidth;
+        fireworksCanvas.height = window.innerHeight;
+
+        let fireworks = [];
+        let particles = [];
+
+        function launchFireworks() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    createFirework();
+                }, i * 400);
+            }
+        }
+
+        function createFirework() {
+            const goldHues = [45, 48, 42, 50, 40];
+            fireworks.push({
+                x: Math.random() * fireworksCanvas.width,
+                y: fireworksCanvas.height,
+                targetY: Math.random() * fireworksCanvas.height / 2,
+                speed: 6,
+                color: `hsl(${goldHues[Math.floor(Math.random() * goldHues.length)]}, 80%, 60%)`
+            });
+        }
+
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 60; i++) {
+                const angle = (Math.PI * 2 * i) / 60;
+                particles.push({
+                    x: x,
+                    y: y,
+                    speedX: Math.cos(angle) * (Math.random() * 4 + 2),
+                    speedY: Math.sin(angle) * (Math.random() * 4 + 2),
+                    color: color,
+                    life: 120
+                });
+            }
+        }
+
+        function animateFireworks() {
+            fireworksCtx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+            fireworksCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+
+            fireworks.forEach((fw, index) => {
+                fireworksCtx.beginPath();
+                fireworksCtx.arc(fw.x, fw.y, 3, 0, Math.PI * 2);
+                fireworksCtx.fillStyle = fw.color;
+                fireworksCtx.fill();
+
+                fw.y -= fw.speed;
+
+                if (fw.y <= fw.targetY) {
+                    createParticles(fw.x, fw.y, fw.color);
+                    fireworks.splice(index, 1);
+                }
+            });
+
+            particles.forEach((p, index) => {
+                fireworksCtx.beginPath();
+                fireworksCtx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                fireworksCtx.fillStyle = p.color;
+                fireworksCtx.fill();
+
+                p.x += p.speedX;
+                p.y += p.speedY;
+                p.speedY += 0.08;
+                p.life--;
+
+                if (p.life <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+
+            if (fireworks.length > 0 || particles.length > 0) {
+                requestAnimationFrame(animateFireworks);
+            }
+        }
+
+        document.querySelector('.fireworks-btn').addEventListener('click', () => {
+            animateFireworks();
+        });
+
+        window.addEventListener('resize', () => {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+            fireworksCanvas.width = window.innerWidth;
+            fireworksCanvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+
+</html>
